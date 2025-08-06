@@ -8,13 +8,29 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#3390ec">
     <title>FakeChat для съёмок</title>
+
+    <!-- Стили -->
     <link rel="stylesheet" href="src/styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" href="icons/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./src/root.css">
+    <link rel="stylesheet" href="./src/general.css">
+    <link rel="stylesheet" href="./src/adaptation.css">
+    <link rel="stylesheet" href="./src/admin.css">
+    <link rel="stylesheet" href="./src/animation.css">
+    <link rel="stylesheet" href="./src/chat.css">
+    <link rel="stylesheet" href="./src/checkbox.css">
+    <link rel="stylesheet" href="./src/indicator.css">
+    <link rel="stylesheet" href="./src/input.css">
+    <link rel="stylesheet" href="./src/message.css">
+    <link rel="stylesheet" href="./src/sidebar.css">
+    <link rel="stylesheet" href="./src/theme.css">
+    <link rel="stylesheet" href="./src/modal-window-chat.css">
 </head>
 <body>
     <div id="app-container">
+
         <!-- Боковая панель с чатами -->
         <div id="sidebar" class="telegram-theme">
             <div id="sidebar-header">
@@ -40,6 +56,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Модальное окно для добавления нового чата -->
+        <div id="new-chat-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Добавить новый диалог</h3>
+            <label for="chat-name-input-modal">Название чата:</label>
+            <input type="text" id="chat-name-input-modal" placeholder="Введите название чата" maxlength="50" />
+
+            <label for="chat-message-input-modal" style="margin-top:10px;">Первое сообщение (необязательно):</label>
+            <textarea id="chat-message-input-modal" placeholder="Введите сообщение" maxlength="200" rows="3"></textarea>
+
+            <div class="modal-buttons">
+            <button id="add-chat-confirm" class="primary-btn">Добавить</button>
+            <button id="add-chat-cancel" class="secondary-btn">Отмена</button>
+            </div>
+        </div>
+        </div>
+
 
         <!-- Основное окно чата -->
         <div id="chat-container" class="telegram-theme">
@@ -100,7 +134,7 @@
 
             <div id="input-area">
                 <button id="attach-btn">📎</button>
-                <textarea id="message-input" placeholder="Введите сообщение..." maxlength="500"></textarea>
+                <textarea id="message-input" placeholder="Введите сообщение..." maxlength="500" style="letter-spacing: -0.9px;"></textarea>
                 <button id="send-btn">➤</button>
             </div>
         </div>
@@ -138,7 +172,12 @@
                         <button class="edit-btn">✏️</button>
                     </div>
                 </div>
-                <button id="add-participant" class="add-btn">+ Добавить участника</button>
+
+                <div class="button-group" style="margin-top: 10px;">
+                    <button id="add-participant" class="add-btn">＋ Добавить участника</button>
+                    <button id="delete-participant" class="delete-btn">− Удалить участника</button>
+                    <button id="change-status-participant" class="status-btn">✎ Изменить статус участника</button>
+                </div>
             </div>
 
             <div class="tab-content hidden" id="messages-tab">
@@ -210,6 +249,12 @@
         </div>
     </div>
 
-    <script src="src/app.js"></script>
+    <script src="./src/modal-admin-window.js"></script>
+    <script src="./src/sidebar-chat.js"></script>
+    <script src="./src/chatlist.js"></script>
+    <script src="./src/app.js"></script>
+    <script src="./src/admin-status.js"></script>
+    <script src="./src/move.js"></script>
+    <script src="./src/time-message.js"></script>
 </body>
 </html>
