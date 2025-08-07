@@ -90,7 +90,6 @@ function closeStatusModal() {
 // Сохранить статус
 statusSaveBtn.addEventListener('click', () => {
     if (!editingParticipantId) return;
-
     const participant = getParticipantById(editingParticipantId);
     if (!participant) return;
 
@@ -101,35 +100,40 @@ statusSaveBtn.addEventListener('click', () => {
     } else if (statusSelect.value === 'recently') {
         newStatus = 'был недавно';
     } else if (statusSelect.value === 'custom') {
-        if (customDatetimeInput.value) {
-            // Парсим введённое значение в input datetime-local
-            const dt = new Date(customDatetimeInput.value);
-            if (isNaN(dt)) {
-                alert('Некорректная дата.');
-                return;
-            }
+        if (!customDatetimeInput.value) {
+            alert('Пожалуйста, укажите дату и время для статуса "Был в сети".');
+            return;
+        }
+        const dt = new Date(customDatetimeInput.value);
+        if (isNaN(dt)) {
+            alert('Некорректная дата.');
+            return;
+        }
 
-            // Форматируем дату в "ДД.ММ.ГГГГ в ЧЧ:ММ"
+        // Текущая дата для сравнения
+        const now = new Date();
+
+        // Считаем разницу в днях (округлённо вниз)
+        const diffMs = now - dt;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffDays >= 0 && diffDays <= 10) {
+            newStatus = `был в сети ${diffDays} ${pluralizeDays(diffDays)} назад`;
+        } else {
+            // Стандартный формат
             const day = dt.getDate().toString().padStart(2, '0');
             const month = (dt.getMonth() + 1).toString().padStart(2, '0');
             const year = dt.getFullYear();
             const hours = dt.getHours().toString().padStart(2, '0');
             const minutes = dt.getMinutes().toString().padStart(2, '0');
-
             newStatus = `был(-а) в сети ${day}.${month}.${year} в ${hours}:${minutes}`;
-        } else {
-            alert('Пожалуйста, укажите дату и время для статуса "Был в сети".');
-            return;
         }
     }
 
     participant.status = newStatus;
-
     saveData();
-    populateAdminPanel(); // обновление админки
-
-    updateChatHeader(); // обновление интерфейса
-
+    populateAdminPanel();
+    updateChatHeader();
     closeStatusModal();
 });
 
@@ -155,3 +159,4 @@ changeStatusBtn.addEventListener('click', () => {
 
     openStatusModal(participant.id);
 });
+
