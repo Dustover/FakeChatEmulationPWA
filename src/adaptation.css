@@ -1,0 +1,83 @@
+@media (max-width: 1024px) {
+  #admin-panel {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 280px;
+  }
+
+  #sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  }
+
+  #sidebar.visible {
+    transform: translateX(0);
+  }
+
+  #back-button {
+    display: block;
+  }
+
+  .admin-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    flex: none;
+    width: 33.33%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-header {
+    padding: 15px;
+  }
+
+  .tab-content {
+    padding: 15px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .theme-selector {
+    flex-wrap: wrap;
+  }
+
+  .theme-option {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Поддержка iPhone X+ */
+@supports (padding: max(0px)) {
+  #chat-header {
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: 12px;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  #input-area {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  #admin-panel {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .admin-header {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+}
