@@ -51,7 +51,6 @@ function openStatusModal(participantId) {
     const participant = getParticipantById(participantId);
     if (!participant) return;
 
-    // Устанавливаем текущее значение в селекте
     if (participant.status === 'online') {
         statusSelect.value = 'online';
         customDatetimeInput.classList.add('hidden');
@@ -61,22 +60,17 @@ function openStatusModal(participantId) {
         customDatetimeInput.classList.add('hidden');
         customDatetimeInput.value = '';
     } else {
-        // Пару попыток распарсить "был в сети 2023-08-05T14:30:00" (пример)
-        const customMatch = participant.status.match(/был в сети\s*(.*)/i);
-        if (customMatch) {
+        // Разбор строки "был(-а) в сети ДД.ММ.ГГГГ в ЧЧ:ММ"
+        const regex = /был(?:\(-а\))? в сети (\d{2})\.(\d{2})\.(\d{4}) в (\d{2}):(\d{2})/i;
+        const match = participant.status.match(regex);
+        if (match) {
+            const [, day, month, year, hours, minutes] = match;
+            // Формируем строку для datetime-local: YYYY-MM-DDTHH:mm
+            const isoDatetimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+            customDatetimeInput.value = isoDatetimeLocal;
             statusSelect.value = 'custom';
             customDatetimeInput.classList.remove('hidden');
-            const dateStr = customMatch[1];
-            // Установим значение для datetime если valid
-            if (Date.parse(dateStr)) {
-                // Приводим к формату для datetime-local: yyyy-MM-ddThh:mm
-                const dt = new Date(dateStr);
-                customDatetimeInput.value = dt.toISOString().slice(0,16);
-            } else {
-                customDatetimeInput.value = '';
-            }
         } else {
-            // Неизвестный формат — ставим recently по умолчанию
             statusSelect.value = 'recently';
             customDatetimeInput.classList.add('hidden');
             customDatetimeInput.value = '';
@@ -85,6 +79,7 @@ function openStatusModal(participantId) {
 
     statusModal.classList.remove('hidden');
 }
+
 
 // Закрыть модалку
 function closeStatusModal() {
@@ -100,13 +95,28 @@ statusSaveBtn.addEventListener('click', () => {
     if (!participant) return;
 
     let newStatus = '';
+
     if (statusSelect.value === 'online') {
         newStatus = 'online';
     } else if (statusSelect.value === 'recently') {
         newStatus = 'был недавно';
     } else if (statusSelect.value === 'custom') {
         if (customDatetimeInput.value) {
-            newStatus = `был в сети ${customDatetimeInput.value}`;
+            // Парсим введённое значение в input datetime-local
+            const dt = new Date(customDatetimeInput.value);
+            if (isNaN(dt)) {
+                alert('Некорректная дата.');
+                return;
+            }
+
+            // Форматируем дату в "ДД.ММ.ГГГГ в ЧЧ:ММ"
+            const day = dt.getDate().toString().padStart(2, '0');
+            const month = (dt.getMonth() + 1).toString().padStart(2, '0');
+            const year = dt.getFullYear();
+            const hours = dt.getHours().toString().padStart(2, '0');
+            const minutes = dt.getMinutes().toString().padStart(2, '0');
+
+            newStatus = `был(-а) в сети ${day}.${month}.${year} в ${hours}:${minutes}`;
         } else {
             alert('Пожалуйста, укажите дату и время для статуса "Был в сети".');
             return;
@@ -116,13 +126,13 @@ statusSaveBtn.addEventListener('click', () => {
     participant.status = newStatus;
 
     saveData();
-    populateAdminPanel(); // обновим статусы в админке
+    populateAdminPanel(); // обновление админки
 
-    // Также обновим статус в основном интерфейсе, если меняется статус другого участника
-    updateChatHeader();
+    updateChatHeader(); // обновление интерфейса
 
     closeStatusModal();
 });
+
 
 // Отмена
 statusCancelBtn.addEventListener('click', closeStatusModal);
