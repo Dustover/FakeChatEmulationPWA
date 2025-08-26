@@ -41,6 +41,6 @@
 }
 
 #message-input:focus {
-  box-shadow: 0 0 0 2px var(--primary-color);
-
+  outline: none; /* отключаем стандартный синий контур */
 }
+
